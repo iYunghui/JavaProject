@@ -4,32 +4,32 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
 
 public class MyFrame extends JFrame{
 	
 	private static String button = new String("");
-	private static int count = 0;
+	private static int skill1_count = 0;
+	private static int skill2_count = 0;
+	private static int skill3_count = 0;
 	
-	Tower tower = new Tower();
-	Role role = new Role();
+	private static int tower_x = 200;       // tower_x = role.getposx();
+	private static int tower_y = 250;       // tower_y = role.getposy();
+	private static int tower_blood = 1500;  // tower_blood = role.getblood();
+	
+	private static int role_x = 560;        // tower_blood = role.getposx();
+	private static int role_y = 260;        // tower_blood = role.getposy();
+	private static int role_blood = 1000;   // tower_blood = role.getblood();
+	
+	private static int tower_damage = 0;
+	private static int role_damage = 0;
+	
+	static Tower tower = new Tower();
+	static Role role = new Role(role_blood, role_x, role_y);
 
-	private int tower_x = 200;      // tower_x = role.getposx();
-	private int tower_y = 250;       // tower_y = role.getposy();
-	private int tower_blood = 1500; // tower_blood = role.getblood();
-	
-	private int role_x = 560;         // tower_blood = role.getposx();
-	private int role_y = 260;       // tower_blood = role.getposy();
-	private int role_blood = 1000;  // tower_blood = role.getblood();
-	
-	private int tower_damage = 0;
-	private int role_damage = 0;
 	
 	private static Boolean isStart = false;
 	private static JButton start, Skill_1, Skill_2, Skill_3;
-	JLabel text;
-	
-	
+	private static JLabel text;
 	
 	public static void main(String[] args) {
 		MyFrame frame = new MyFrame();
@@ -38,17 +38,20 @@ public class MyFrame extends JFrame{
 		TimerTask timetask = new TimerTask() {
 			@Override
 			public void run() {
-				count++;
-				if(!Skill_1.isEnabled() && count>5) {
+				skill1_count++;
+				skill2_count++;
+				skill3_count++;
+				if(!Skill_1.isEnabled() && skill1_count>5) {
 					Skill_1.setEnabled(true);
 				}
-				else if(!Skill_2.isEnabled() && count>5) {
+				else if(!Skill_2.isEnabled() && skill2_count>5) {
 					Skill_2.setEnabled(true);
 				}
-				else if(!Skill_3.isEnabled() && count>5) {
+				else if(!Skill_3.isEnabled() && skill3_count>5) {
 					Skill_3.setEnabled(true);
 				}
-				frame.re();
+				frame.repaint();
+				frame.judge();
 	        }
 		};
 		timer.schedule(timetask, 0, 1000);
@@ -62,8 +65,27 @@ public class MyFrame extends JFrame{
 		initialize();
 	}
 	
-	public void re() {
-		repaint();
+	public void check() {
+		if(role.getposx()!=role_x || role.getposy()!=role_y) {
+			role_x = role.getposx();
+			role_y = role.getposy();
+			repaint();
+		}
+	}
+	
+	static public void reStart() {
+		skill1_count = skill2_count = skill3_count = 0;
+		
+		tower_x = 200;       // tower_x = role.getposx();
+		tower_y = 250;       // tower_y = role.getposy();
+		tower_blood = 1500;  // tower_blood = role.getblood();
+		
+		role_x = 560;        // tower_blood = role.getposx();
+		role_y = 260;        // tower_blood = role.getposy();
+		role_blood = 1000;   // tower_blood = role.getblood();
+		
+		tower_damage = 0;
+		role_damage = 0;
 	}
 
 	public void paint(Graphics g) {
@@ -88,6 +110,13 @@ public class MyFrame extends JFrame{
 		g.setColor(Color.RED);
 		g.drawRect(role_x+10, role_y+180, 100, 8);
 		g.fillRect(role_x+10, role_y+180, role_blood/10, 8);
+		
+		if(tower_damage > 0) {
+			Font f = new Font("Arial Bold",Font.BOLD|Font.ITALIC,30); 
+			g.setFont(f);
+			g.drawString("-"+tower_damage, 200, 250);
+			tower_damage = 0;
+		}
 	}
 	
 	public void initialize() {
@@ -101,6 +130,7 @@ public class MyFrame extends JFrame{
 		text = new JLabel("");
 		text.setLocation(1100, 100);
 		text.setSize(120, 30);
+		add(text);
 		
 		Skill_1 = new JButton("Skill 1");
 		ButtonListener skill1listener = new ButtonListener();
@@ -122,20 +152,22 @@ public class MyFrame extends JFrame{
 		Skill_3.setLocation(1100, 570);
 		Skill_3.setSize(120, 80);
 		add(Skill_3);
-		
 	}
 	
 	public void judge() {
-		if(tower_blood == 0) {
-			System.out.println("lose game");
+		System.out.printf("%d\n", tower_blood);
+		if(role_blood <= 0) {
 			text.setText("lose game");
 			isStart = false;
+			JOptionPane.showMessageDialog(null, "lose game", "GAME OVER", JOptionPane.WARNING_MESSAGE);
+			role_blood = 1;
 			// stop everything
 		}
-		else if(role_blood == 0) {
-			System.out.println("win game");
+		else if(tower_blood <= 0) {
 			text.setText("win game");
 			isStart = false;
+			JOptionPane.showMessageDialog(null, "win game", "YOU WIN", JOptionPane.WARNING_MESSAGE);
+			tower_blood = 1;
 			// stop everything
 		}
 		else {
@@ -153,18 +185,28 @@ public class MyFrame extends JFrame{
 			System.out.println(button);
 			if(button.equals("Start")) {
 				isStart = true;
+				reStart();
 			}
-			else if(button.equals("Skill 1")) {
-				count = 0;
+			else if(button.equals("Skill 1") && isStart) {
+				skill1_count = 0;
 				Skill_1.setEnabled(false);
+				tower_damage = tower_blood - role.skill_one(tower_blood);
+				tower_blood -= tower_damage;
+				text.setText("-"+tower_blood);
 			}
-			else if(button.equals("Skill 2")) {
-				count = 0;
+			else if(button.equals("Skill 2") && isStart) {
+				skill2_count = 0;
 				Skill_2.setEnabled(false);
+				tower_damage = tower_blood - role.skill_two(tower_blood);
+				tower_blood -= tower_damage;
+				text.setText("-"+tower_blood);
 			}
-			else if(button.equals("Skill 3")) {
-				count = 0;
+			else if(button.equals("Skill 3") && isStart) {
+				skill3_count = 0;
 				Skill_3.setEnabled(false);
+				tower_damage = tower_blood - role.skill_three(tower_blood);
+				tower_blood -= tower_damage;
+				text.setText("-"+tower_blood);
 			}
 		}
 	}
