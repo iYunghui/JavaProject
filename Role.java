@@ -42,9 +42,9 @@ public class Role {
 	}
 	public void move(int x, int y) {
 		if(pos_x + x > 0 && pos_x + x < 1080)
-			pos_x = pos_x + x;
+			setposx(x);
 		if(pos_y + y > 0 && pos_y + x < 720)
-			pos_y = pos_y + y;
+			setposy(y);
 	}
 	public Role() {
 		blood = 1500;
