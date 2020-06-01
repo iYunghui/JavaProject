@@ -3,7 +3,7 @@ import java.util.TimerTask;
 
 public class Tower {
 
-	private int blood = 1500;
+	private int blood = 1000;
 	private int position_x;
 	private int position_y;
 	private int cha_x;
