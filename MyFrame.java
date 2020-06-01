@@ -1,11 +1,13 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MyFrame extends JFrame{
+public class MyFrame extends JFrame implements KeyListener{
 	
 	private static String button = new String("");
 	private static int skill1_count = 0;
@@ -23,17 +25,17 @@ public class MyFrame extends JFrame{
 	private static int tower_damage = 0;
 	private static int role_damage = 0;
 	
-	static Tower tower = new Tower();
+	static Tower tower = new Tower(tower_blood, tower_x, tower_y);
 	static Role role = new Role(role_blood, role_x, role_y);
 
 	
 	private static Boolean isStart = false;
 	private static JButton start, Skill_1, Skill_2, Skill_3;
-	private static JLabel text;
 	
 	public static void main(String[] args) {
 		MyFrame frame = new MyFrame();
 		frame.setVisible(true);
+		frame.addKeyListener(frame);
 		Timer timer = new Timer();
 		TimerTask timetask = new TimerTask() {
 			@Override
@@ -50,8 +52,8 @@ public class MyFrame extends JFrame{
 				else if(!Skill_3.isEnabled() && skill3_count>5) {
 					Skill_3.setEnabled(true);
 				}
-				frame.repaint();
 				frame.judge();
+				frame.repaint();
 	        }
 		};
 		timer.schedule(timetask, 0, 1000);
@@ -112,10 +114,19 @@ public class MyFrame extends JFrame{
 		g.fillRect(role_x+10, role_y+180, role_blood/10, 8);
 		
 		if(tower_damage > 0) {
+			g.drawLine(role_x, role_y+90, tower_x+250, tower_y+100);
 			Font f = new Font("Arial Bold",Font.BOLD|Font.ITALIC,30); 
 			g.setFont(f);
 			g.drawString("-"+tower_damage, 200, 250);
 			tower_damage = 0;
+		}
+		
+		if(role_damage > 0) {
+			g.drawLine(role_x, role_y+100, tower_x+250, tower_y+110);
+			Font f = new Font("Arial Bold",Font.BOLD|Font.ITALIC,20); 
+			g.setFont(f);
+			g.drawString("-"+role_damage, 560, 260);
+			role_damage = 0;
 		}
 	}
 	
@@ -123,18 +134,15 @@ public class MyFrame extends JFrame{
 		start = new JButton("Start");
 		ButtonListener startlistener = new ButtonListener();
 		start.addActionListener(startlistener);
+		start.setFocusable(false);
 		start.setLocation(1100, 40);
 		start.setSize(120, 30);
 		add(start);
 		
-		text = new JLabel("");
-		text.setLocation(1100, 100);
-		text.setSize(120, 30);
-		add(text);
-		
 		Skill_1 = new JButton("Skill 1");
 		ButtonListener skill1listener = new ButtonListener();
 		Skill_1.addActionListener(skill1listener);
+		Skill_1.setFocusable(false);
 		Skill_1.setLocation(1100, 370);
 		Skill_1.setSize(120, 80);
 		add(Skill_1);
@@ -142,6 +150,7 @@ public class MyFrame extends JFrame{
 		Skill_2 = new JButton("Skill 2");
 		ButtonListener skill2listener = new ButtonListener();
 		Skill_2.addActionListener(skill2listener);
+		Skill_2.setFocusable(false);
 		Skill_2.setLocation(1100, 470);
 		Skill_2.setSize(120, 80);
 		add(Skill_2);
@@ -149,30 +158,59 @@ public class MyFrame extends JFrame{
 		Skill_3 = new JButton("Skill 3");
 		ButtonListener skill3listener = new ButtonListener();
 		Skill_3.addActionListener(skill3listener);
+		Skill_3.setFocusable(false);
 		Skill_3.setLocation(1100, 570);
 		Skill_3.setSize(120, 80);
 		add(Skill_3);
 	}
 	
 	public void judge() {
-		System.out.printf("%d\n", tower_blood);
 		if(role_blood <= 0) {
-			text.setText("lose game");
 			isStart = false;
 			JOptionPane.showMessageDialog(null, "lose game", "GAME OVER", JOptionPane.WARNING_MESSAGE);
 			role_blood = 1;
 			// stop everything
 		}
 		else if(tower_blood <= 0) {
-			text.setText("win game");
 			isStart = false;
 			JOptionPane.showMessageDialog(null, "win game", "YOU WIN", JOptionPane.WARNING_MESSAGE);
 			tower_blood = 1;
 			// stop everything
 		}
-		else {
-			
+		else if(isStart){
+			role_damage = tower.attack(role_x, role_y);
+			role_blood -= role_damage;
 		}
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		setFocusable(true);
+		int keys = e.getKeyCode();
+		if (keys == KeyEvent.VK_RIGHT && isStart) {
+            role.move(+5, 0);
+            check();
+        }
+        if (keys == KeyEvent.VK_LEFT && isStart) {
+            role.move(-5, 0);
+            check();
+        }
+        if (keys == KeyEvent.VK_UP && isStart) {
+            role.move(0, -5);
+            check();
+        }
+        if (keys == KeyEvent.VK_DOWN && isStart) {
+            role.move(0, 5);
+            check();
+        }
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
 	}
 	
 	public static class ButtonListener implements ActionListener{
@@ -192,23 +230,20 @@ public class MyFrame extends JFrame{
 				Skill_1.setEnabled(false);
 				tower_damage = tower_blood - role.skill_one(tower_blood);
 				tower_blood -= tower_damage;
-				text.setText("-"+tower_blood);
 			}
 			else if(button.equals("Skill 2") && isStart) {
 				skill2_count = 0;
 				Skill_2.setEnabled(false);
 				tower_damage = tower_blood - role.skill_two(tower_blood);
 				tower_blood -= tower_damage;
-				text.setText("-"+tower_blood);
 			}
 			else if(button.equals("Skill 3") && isStart) {
 				skill3_count = 0;
 				Skill_3.setEnabled(false);
 				tower_damage = tower_blood - role.skill_three(tower_blood);
 				tower_blood -= tower_damage;
-				text.setText("-"+tower_blood);
 			}
+			System.out.println(button);
 		}
 	}
-
 }

@@ -16,29 +16,18 @@ public class Role {
 		return towerblood;
 	}
 	public int skill_two(int towerblood) {
-		if(pos_x < tower_x || pos_x > tower_x + 250)
-		 	return towerblood;
-		else if(pos_y < tower_y || pos_y > tower_y + 150)
-		 	return towerblood;
-		else if(skill2time == 0 || current - skill2time >= 15000) {
-			skill2time = current;
-			return towerblood - 10;
-		}
-		else 
-			return towerblood;
+		if(pos_x > tower_x && pos_x < tower_x + 250)
+		 	return towerblood - 10;
+		else if(pos_y > tower_y && pos_y < tower_y + 150)
+		 	return towerblood - 10;
+		return towerblood;
 	}
 	public int skill_three(int towerblood) {
-		long current = System.currentTimeMillis( );
-		if(skill3time == 0 || current - skill3time >= 15000) {
-			skill3time = current;
-			int random = (int) (Math.random()*10);
-			if(random < 5)
-				return towerblood - 50;
-			else
-				return towerblood - 100;
-		}
+		int random = (int) (Math.random()*10);
+		if(random < 5)
+			return towerblood - 50;
 		else
-			return towerblood;
+			return towerblood - 100;
 	}
 	public void move(int x, int y) {
 		if(pos_x + x > 0 && pos_x + x < 1080)
@@ -46,10 +35,10 @@ public class Role {
 		if(pos_y + y > 0 && pos_y + x < 720)
 			setposy(y);
 	}
-	public Role() {
-		blood = 1500;
-		pos_x = 0;
-		pos_y = 300;
+	public Role(int b, int x, int y) {
+		blood = b;
+		pos_x = x;
+		pos_y = y;
 	}
 	public int getblood() {
 		return blood;
@@ -70,4 +59,3 @@ public class Role {
 		pos_y = pos_y + change;
 	}
 }
-

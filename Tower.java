@@ -1,16 +1,29 @@
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Tower {
 
 	private int blood = 1000;
 	private int position_x;
 	private int position_y;
-	private int cha_x;
-	private int cha_y;
+	private int role_x = 0;
+	private int role_y = 0;
 	
-	public void setblood() {
-		blood = blood - 10;
+	public Tower(int b, int x, int y) {
+		blood = b;
+		position_x = x;
+		position_y = y;
+	}
+	
+	public int attack(int x, int y) {
+		if(x<=role_x+5 && x>=role_x-5 && y<=role_y+5 && y>=role_y-5) {
+			role_x = x;
+			role_y = y;
+			return 10;
+		}
+		else {
+			role_x = x;
+			role_y = y;
+			return 0;
+		}
 	}
 	
 	public int getblood() {
@@ -30,4 +43,3 @@ public class Tower {
 		return position_y;
 	}
 }
-
