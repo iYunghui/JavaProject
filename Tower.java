@@ -1,4 +1,3 @@
-
 public class Tower {
 
 	private int blood = 1000;
@@ -7,23 +6,31 @@ public class Tower {
 	private int role_x = 0;
 	private int role_y = 0;
 	
-	public Tower(int b, int x, int y) {
-		blood = b;
-		position_x = x;
-		position_y = y;
+	public Tower() {
+		blood = 1500;
+		position_x = 200;
+		position_y = 250;
 	}
 	
-	public int attack(int x, int y) {
-		if(x<=role_x+5 && x>=role_x-5 && y<=role_y+5 && y>=role_y-5) {
+	public int attack(int z, Role ro) {
+		int r = 0;
+		int x = ro.getposx();
+		int y = ro.getposy();
+		if(z==1 && x<=role_x+5 && x>=role_x-5 && y<=role_y+5 && y>=role_y-5) {
 			role_x = x;
 			role_y = y;
-			return 10;
+			r = 10;
+		}
+		else if(z==2) {
+			r = 10;
 		}
 		else {
 			role_x = x;
 			role_y = y;
-			return 0;
+			r = 0;
 		}
+		ro.setblood(-r);
+		return r;
 	}
 	
 	public int getblood() {
@@ -41,5 +48,9 @@ public class Tower {
 	
 	public int getposition_y() {
 		return position_y;
+	}
+	
+	public void setblood(int change) {
+		blood = blood + change;
 	}
 }
