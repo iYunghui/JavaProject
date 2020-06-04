@@ -42,10 +42,10 @@ public class MyFrame extends JFrame implements KeyListener{
 				if(!Skill_1.isEnabled() && skill1_count>5) {
 					Skill_1.setEnabled(true);
 				}
-				else if(!Skill_2.isEnabled() && skill2_count>15) {
+				else if(!Skill_2.isEnabled() && skill2_count>10) {
 					Skill_2.setEnabled(true);
 				}
-				else if(!Skill_3.isEnabled() && skill3_count>20) {
+				else if(!Skill_3.isEnabled() && skill3_count>15) {
 					Skill_3.setEnabled(true);
 				}
 				else if(!Heal.isEnabled() && heal_count>5) {
@@ -65,14 +65,7 @@ public class MyFrame extends JFrame implements KeyListener{
 		
 		initialize();
 	}
-	/*
-	public void check() {
-		if(role.getposx()!=role_x || role.getposy()!=role_y) {
-			role_x = role.getposx();
-			role_y = role.getposy();
-		}
-	}
-	*/
+
 	static public void reStart() {
 		skill1_count = skill2_count = skill3_count = heal_count = 0;
 		
@@ -195,18 +188,19 @@ public class MyFrame extends JFrame implements KeyListener{
 		if(role.getblood() <= 0) {
 			isStart = false;
 			JOptionPane.showMessageDialog(null, "lose game", "GAME OVER", JOptionPane.WARNING_MESSAGE);
-			role.setblood(1);
+			role.setblood(1000);
 			// stop everything
 		}
 		else if(tower.getblood() <= 0) {
 			isStart = false;
 			JOptionPane.showMessageDialog(null, "win game", "YOU WIN", JOptionPane.WARNING_MESSAGE);
-			tower.setblood(1);
+			tower.setblood(1000);
 			// stop everything
 		}
 		else if(isStart){
 			role_damage = tower.attack(1, role);
-			role2_damage = tower.attack(2, role2);
+			if(role2.getblood() > 0)
+				role2_damage = tower.attack(2, role2);
 		}
 		if(role2.getblood() <= 0) {
 			Heal.setEnabled(false);
