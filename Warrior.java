@@ -2,21 +2,21 @@ package Tzu;
 
 public class Warrior extends Role {
 
-	public Warrior(int b, int x, int y) {
-		super(b, x, y);
+	public Warrior() {
+		super(1000, 560, 260);
 	}
 	public int skill_one(int towerblood) {
-		if(pos_x > tower_x - 200 && pos_x < tower_x + 450)
+		if(pos_x > tower_x - 100 && pos_x < tower_x + 350)
 		 	return towerblood - 5;
-		else if(pos_y > tower_y - 200 && pos_y < tower_y + 350)
+		else if(pos_y > tower_y - 100 && pos_y < tower_y + 200)
 		 	return towerblood - 5;
 		return towerblood;
 	}
 	public int skill_two(int towerblood) {
 		if(pos_x > tower_x - 100 && pos_x < tower_x + 350)
-		 	return towerblood - 10;
-		else if(pos_y > tower_y - 100 && pos_y < tower_y + 250)
-		 	return towerblood - 10;
+		 	return towerblood - 20;
+		else if(pos_y > tower_y - 100 && pos_y < tower_y + 200)
+		 	return towerblood - 20;
 		return towerblood;
 	}
 	public int skill_three(int towerblood) {
