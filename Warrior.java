@@ -1,5 +1,3 @@
-package Tzu;
-
 public class Warrior extends Role {
 
 	public Warrior() {
