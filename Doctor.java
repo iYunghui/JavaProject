@@ -1,10 +1,8 @@
-package Tzu;
-
 public class Doctor extends Role {
-	public Doctor(int b, int x, int y) {
-		super(b, x, y);
+	public Doctor() {
+		super(1000, 260, 460);
 	}
-	public int skill(int warriorblood) {
-		return warriorblood + 10;
+	public void skill(Warrior w) {
+		w.setblood(10);
 	}
 }
